@@ -8,10 +8,10 @@ namespace circustrein
 {
     class Dier
     {
-        public int SoortEter { get; set; }
-        public int Grootte { get; set; }
+        public string SoortEter { get; set; }
+        public string Grootte { get; set; }
 
-        public Dier(int soortEter, int grootte)
+        public Dier(string soortEter, string grootte)
         {
             SoortEter = soortEter;
             Grootte = grootte;
@@ -19,9 +19,7 @@ namespace circustrein
 
         public override string ToString()
         {
-            string soortEterName = Enum.GetName(typeof(SoortEter), SoortEter);
-            string grootteName = Enum.GetName(typeof(Grootte), Grootte);
-            return string.Format("SoortEter: {0} | Grootte: {1}", soortEterName, grootteName);
+            return string.Format("SoortEter: {0} | Grootte: {1}", SoortEter, Grootte);
         }
     }
 
@@ -33,7 +31,7 @@ namespace circustrein
     }
     public enum SoortEter
     {
-        Normaal = 1,
-        VleesEter = 2
+        Plant = 1,
+        Vlees = 2
     }
 }

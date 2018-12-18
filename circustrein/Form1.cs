@@ -30,39 +30,21 @@ namespace circustrein
 
         private void btnVerdelen_Click(object sender, EventArgs e)
         {
+            Wagon.GrootteInstelling = Convert.ToInt32(txtBoxWagonGrootte.Text);
 
+            List<Dier> listDieren = listBoxLijstDieren.Items.Cast<Dier>().ToList();
+
+            Trein trein = new Trein(listDieren);
         }
 
         private void btnToevoegen_Click(object sender, EventArgs e)
         {
             string soortEter = comboBoxSoortEter.Items[comboBoxSoortEter.SelectedIndex].ToString();
-            string grootte = comboBoxGrootte.Items[comboBoxSoortEter.SelectedIndex].ToString();
+            string grootte = comboBoxGrootte.Items[comboBoxGrootte.SelectedIndex].ToString();
 
-            //Covert to enum values
-            int enumValueSoortEter = comboBoxSoortEter.SelectedIndex+1;
-            int enumValueGrootte = comboBoxGrootte.SelectedIndex;
-
-
-            string kek = circustrein.Grootte.Groot.ToString(); 
-            int enumValueSoortEter = (string)circustrein.Grootte.Groot();
-            int enumValueGrootte = (int)Question.Role;
-
-            Enum.GetName(typeof(SoortEter), soortEter);
-            Enum.GetName(typeof(Grootte), grootte);
-
-            if (enumValueGrootte == 0)
-            {
-                enumValueGrootte = Convert.ToInt32(circustrein.Grootte.Klein);
-            }
-            else
-            {
-                enumValueGrootte += 2;
-            }
-
-            Dier dier = new Dier(enumValueSoortEter, enumValueGrootte);
+            Dier dier = new Dier(soortEter, grootte);
 
             listBoxLijstDieren.Items.Add(dier);
-
         }
     }
 }
