@@ -21,11 +21,6 @@ namespace circustrein
             Grootte = grootte;
         }
 
-        public void VoegDierToeAanWagon(Dier dier)
-        {
-            LijstDieren.Add(dier);
-        }
-
         public bool BevatGrootsteFormaatDierInWagon(Wagon wagon)
         {
             bool bevatGrootsteFormatDier = false;

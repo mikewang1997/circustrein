@@ -17,46 +17,56 @@ namespace circustrein
 
         public void VerdeelDierenInWagons(List<Dier> listVanDieren)
         {
+            ListWagons = new List<Wagon>();
             MaakWagons(BerekenAantalWagons(listVanDieren));
 
             VerdeelVleesEters(listVanDieren);
             VerdeelPlantEters(listVanDieren);
-            //List<Wagon> tempListWagon = new List<Wagon>();
-
-            //int AantalWagons = BerekenAantalWagons(listVanDieren);
-
-            //tempListWagon = MaakWagons(AantalWagons);
-
-            //tempListWagon = VerdeelDierenVleesEters(tempListWagon, listVanDieren);
         }
 
         public int BerekenAantalWagons(List<Dier> listVanDieren)
         {
             int aantalVleesEters = 0;
-            int aantalDierenWagon = 0;
+            int aantalPlantEters = 0;
 
-            if (Wagon.GrootteInstelling > 0)
-            {
-                aantalDierenWagon = listVanDieren.Count / Wagon.GrootteInstelling;
-            }
-
+            int aantalWagons = 0;
             foreach (Dier dier in listVanDieren)
             {
                 if (dier.SoortEter == SoortEter.Vlees.ToString())
                 {
                     aantalVleesEters++;
                 }
+                if (dier.SoortEter == SoortEter.Plant.ToString())
+                {
+                    aantalPlantEters++;
+                }
             }
 
-            if(aantalVleesEters >= aantalDierenWagon)
+            if (aantalPlantEters > 0)
             {
-                return aantalVleesEters;
+                if (aantalVleesEters > 0)
+                {
+                    aantalWagons = aantalVleesEters;
+                    int aantalExtraWagons = 0;
+
+                    //double berekenAantalExtraWagon = (double)aantalPlantEters / (aantalWagons * Wagon.GrootteInstelling - aantalVleesEters);
+                    //if (berekenAantalExtraWagon > 1)
+                   // {
+                        aantalExtraWagons = Convert.ToInt32(Math.Ceiling((double)aantalPlantEters / (aantalWagons * Wagon.GrootteInstelling - aantalVleesEters)));
+                    //}
+
+                    return aantalWagons+aantalExtraWagons;
+                }
+                else
+                {
+                    aantalWagons = Convert.ToInt32(Math.Ceiling((double)aantalPlantEters / Wagon.GrootteInstelling));
+                    return aantalWagons;  
+                }
             }
             else
             {
-                return aantalDierenWagon;
+                return 0;
             }
-
         }
 
         public void MaakWagons(int aantal)
@@ -69,31 +79,47 @@ namespace circustrein
         }
 
         public void VerdeelVleesEters(List<Dier> listVanDieren)
-        { 
-            foreach (Wagon wagon in ListWagons)
+        {
+            foreach (Dier dier in listVanDieren)
             {
-                bool skipToNextWagon = false;
-                while (!skipToNextWagon)
+                foreach (Wagon wagon in ListWagons)
                 {
-                    //Check 1: In wagon bevat vlees eter
-                    foreach (Dier dierInWagon in wagon.LijstDieren)
+                    if (!dier.ZitInWagon)
                     {
-                        if (dierInWagon.SoortEter == SoortEter.Vlees.ToString())
-                        {
-                            skipToNextWagon = true;
-                            break;
-                        }
-                    }
+                        bool skipToNextWagon = false;
 
-                    //Verdeel in wagon 
-                    if (!skipToNextWagon)
-                    {
-                        foreach (Dier dier in listVanDieren)
+                        while (!skipToNextWagon)
                         {
-                            //Verdeel dieren die eter: vlees
-                            if (dier.SoortEter == SoortEter.Vlees.ToString())
+                            //Check 1: In wagon bevat vlees eter
+                            foreach (Dier dierInWagon in wagon.LijstDieren)
                             {
-                                wagon.LijstDieren.Add(dier);
+                                if (dierInWagon.SoortEter == SoortEter.Vlees.ToString())
+                                {
+                                    skipToNextWagon = true;
+                                    break;
+                                }
+                            }
+
+                            //Check 2: dier is plant eter
+                            if (dier.SoortEter == SoortEter.Plant.ToString())
+                            {
+                                skipToNextWagon = true;
+                                break;
+                            }
+
+                            //Verdeel in wagon 
+                            if (!skipToNextWagon)
+                            {
+                                //Verdeel dieren die eet: vlees
+                                if (dier.SoortEter == SoortEter.Vlees.ToString())
+                                {
+                                    wagon.LijstDieren.Add(dier);
+
+                                    skipToNextWagon = true;
+                                    dier.ZitInWagon = true;
+                                    break;
+                                }
+
                             }
                         }
                     }
@@ -103,36 +129,55 @@ namespace circustrein
 
         public void VerdeelPlantEters(List<Dier> listVanDieren)
         {
-            foreach (Wagon wagon in ListWagons)
+            foreach (Dier dier in listVanDieren)
             {
-                bool skipToNextWagon = false;
-                while (!skipToNextWagon)
+                foreach (Wagon wagon in ListWagons)
                 {
-                    //Check 1: 
-                    foreach (Dier dierInWagon in wagon.LijstDieren)
+                    if (!dier.ZitInWagon)
                     {
-                        //Is vlees eter
-                        if (dierInWagon.SoortEter == SoortEter.Vlees.ToString())
+                        bool skipToNextWagon = false;
+
+                        while (!skipToNextWagon)
                         {
-                            if (true)
+                            foreach (Dier dierInWagon in wagon.LijstDieren)
                             {
+
+                                //Check 1
+                                int soortGrootteToInt = (int)Enum.Parse(typeof(Grootte), dierInWagon.Grootte);
+
+                                if (dierInWagon.SoortEter == SoortEter.Vlees.ToString() & soortGrootteToInt >= (int)Grootte.Groot)
+                                {
+                                    skipToNextWagon = true;
+                                    break;
+                                }
+
+                                //Check 2
+                                int dierGrootteToInt = (int)Enum.Parse(typeof(Grootte), dier.Grootte);
+                                int dierInWagonGrootteToInt = (int)Enum.Parse(typeof(Grootte), dierInWagon.Grootte);
+
+                                if (dierInWagon.SoortEter == SoortEter.Vlees.ToString() & dierInWagonGrootteToInt >= dierGrootteToInt)
+                                {
+                                    skipToNextWagon = true;
+                                    break;
+                                }
+
+                            }
+
+                            //Verdeel in wagon 
+                            if (!skipToNextWagon)
+                            {
+                                //Verdeel dieren die eet: plant
+                                if (dier.SoortEter == SoortEter.Plant.ToString())
+                                {
+                                    wagon.LijstDieren.Add(dier);
+
+                                    dier.ZitInWagon = true;
+                                    skipToNextWagon = true;
+                                    break;
+                                }
                                 
                             }
-                            skipToNextWagon = true;
-                            break;
-                        }
-                    }
 
-                    //Verdeel in wagon 
-                    if (!skipToNextWagon)
-                    {
-                        foreach (Dier dier in listVanDieren)
-                        {
-                            //Verdeel dieren die eter: vlees
-                            if (dier.SoortEter == SoortEter.Vlees.ToString())
-                            {
-                                wagon.LijstDieren.Add(dier);
-                            }
                         }
                     }
                 }

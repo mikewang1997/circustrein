@@ -10,11 +10,12 @@ namespace circustrein
     {
         public string SoortEter { get; set; }
         public string Grootte { get; set; }
-
+        public bool ZitInWagon { get; set; }
         public Dier(string soortEter, string grootte)
         {
             SoortEter = soortEter;
             Grootte = grootte;
+            ZitInWagon = false;
         }
 
         public override string ToString()
